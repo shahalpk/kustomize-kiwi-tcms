@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kiwi-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: kiwi-web
+  template:
+    metadata:
+      labels:
+        deployment: kiwi-web
+    spec:
+      volumes:
+      - name: kiwi-uploads
+        persistentVolumeClaim:
+          claimName: kiwi-uploads
+      containers:
+      - name: kiwi-web
+        image: kiwitcms/kiwi:latest
+        imagePullPolicy: Always 
+        ports:
+          - containerPort: 8080
+          - containerPort: 8443
+        volumeMounts:
+        - name: kiwi-uploads
+          mountPath: /Kiwi/uploads
+        envFrom:
+        - configMapRef:
+            name: kiwi-web
